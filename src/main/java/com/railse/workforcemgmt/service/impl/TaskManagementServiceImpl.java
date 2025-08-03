@@ -80,11 +80,19 @@ public class TaskManagementServiceImpl implements TaskManagementService {
 
             // BUG #1: This reassigns all matching tasks instead of assigning one and cancelling others
             if (!tasksOfType.isEmpty()) {
-                for (TaskManagement taskToUpdate : tasksOfType) {
-                    taskToUpdate.setAssigneeId(request.getAssigneeId());
-                    taskRepository.save(taskToUpdate);
+                // ✅ Reassign only the first task
+                TaskManagement taskToAssign = tasksOfType.get(0);
+                taskToAssign.setAssigneeId(request.getAssigneeId());
+                taskRepository.save(taskToAssign);
+
+                // ❌ Cancel the rest
+                for (int i = 1; i < tasksOfType.size(); i++) {
+                    TaskManagement taskToCancel = tasksOfType.get(i);
+                    taskToCancel.setStatus(TaskStatus.CANCELLED);
+                    taskRepository.save(taskToCancel);
                 }
-            } else {
+            }
+            else {
                 TaskManagement newTask = new TaskManagement();
                 newTask.setReferenceId(request.getReferenceId());
                 newTask.setReferenceType(request.getReferenceType());

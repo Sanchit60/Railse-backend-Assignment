@@ -35,7 +35,7 @@ public class TaskManagementController {
     }
 
     @PostMapping("/assign-by-ref")
-    public Response<String> assignByReference(@RequestBody com.railse.workforcemgmt.dto.AssignByReferenceRequest request) {
+    public Response<String> assignByReference(@RequestBody AssignByReferenceRequest request) {
         return new Response<>(taskManagementService.assignByReference(request));
     }
 

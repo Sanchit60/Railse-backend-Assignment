@@ -1,4 +1,4 @@
-package com.railse.hiring.workforcemgmt.repository;
+package com.railse.workforcemgmt.repository;
 
 import com.railse.hiring.workforcemgmt.common.model.enums.ReferenceType;
 import com.railse.hiring.workforcemgmt.model.TaskManagement;
