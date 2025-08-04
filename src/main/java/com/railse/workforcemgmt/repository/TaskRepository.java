@@ -1,6 +1,6 @@
 package com.railse.workforcemgmt.repository;
 
-import com.railse.hiring.workforcemgmt.model.TaskManagement;
+import com.railse.workforcemgmt.model.TaskManagement;
 import com.railse.hiring.workforcemgmt.common.model.enums.ReferenceType;
 
 import java.util.List;

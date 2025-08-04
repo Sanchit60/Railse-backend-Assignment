@@ -3,12 +3,13 @@ package com.railse.workforcemgmt.service.impl;
 import com.railse.workforcemgmt.common.exception.ResourceNotFoundException;
 import com.railse.workforcemgmt.dto.*;
 import com.railse.workforcemgmt.mapper.ITaskManagementMapper;
-import com.railse.hiring.workforcemgmt.model.TaskManagement;
+import com.railse.workforcemgmt.model.TaskManagement;
 import com.railse.hiring.workforcemgmt.model.enums.Task;
 import com.railse.hiring.workforcemgmt.model.enums.TaskStatus;
 import com.railse.workforcemgmt.repository.TaskRepository;
 import com.railse.workforcemgmt.service.TaskManagementService;
 import org.springframework.stereotype.Service;
+import com.railse.workforcemgmt.model.enums.Priority;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,4 +126,22 @@ public class TaskManagementServiceImpl implements TaskManagementService {
 
         return taskMapper.modelListToDtoList(filteredTasks);
     }
+    @Override
+    public String changeTaskPriority(Long taskId, Priority newPriority) {
+        TaskManagement task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + taskId));
+        task.setPriority(newPriority);
+        taskRepository.save(task);
+        return "Priority updated to " + newPriority + " for Task ID: " + taskId;
+    }
+
+    @Override
+    public List<TaskManagementDto> getTasksByPriority(Priority priority) {
+        List<TaskManagement> allTasks = taskRepository.findAll();
+        List<TaskManagement> filteredTasks = allTasks.stream()
+                .filter(task -> task.getPriority() == priority)
+                .toList();
+        return taskMapper.modelListToDtoList(filteredTasks);
+    }
+
 }

@@ -1,8 +1,8 @@
 package com.railse.workforcemgmt.repository;
 
 import com.railse.hiring.workforcemgmt.common.model.enums.ReferenceType;
-import com.railse.hiring.workforcemgmt.model.TaskManagement;
-import com.railse.hiring.workforcemgmt.model.enums.Priority;
+import com.railse.workforcemgmt.model.TaskManagement;
+import com.railse.workforcemgmt.model.enums.Priority;
 import com.railse.hiring.workforcemgmt.model.enums.Task;
 import com.railse.hiring.workforcemgmt.model.enums.TaskStatus;
 import com.railse.workforcemgmt.repository.TaskRepository;

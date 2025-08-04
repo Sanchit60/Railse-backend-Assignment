@@ -5,6 +5,8 @@ import com.railse.workforcemgmt.dto.*;
 import com.railse.workforcemgmt.service.TaskManagementService;
 import org.springframework.web.bind.annotation.*;
 import com.railse.workforcemgmt.dto.*;
+import com.railse.workforcemgmt.model.enums.Priority;
+
 
 import java.util.List;
 
@@ -43,4 +45,17 @@ public class TaskManagementController {
     public Response<List<com.railse.workforcemgmt.dto.TaskManagementDto>> fetchByDate(@RequestBody com.railse.workforcemgmt.dto.TaskFetchByDateRequest request) {
         return new Response<>(taskManagementService.fetchTasksByDate(request));
     }
+    @PostMapping("/change-priority")
+    public Response<String> changePriority(
+            @RequestParam Long taskId,
+            @RequestParam Priority priority) {
+        return new Response<>(taskManagementService.changeTaskPriority(taskId, priority));
+    }
+
+    @GetMapping("/priority/{priority}")
+    public Response<List<TaskManagementDto>> getTasksByPriority(
+            @PathVariable com.railse.workforcemgmt.model.enums.Priority priority) {
+        return new Response<>(taskManagementService.getTasksByPriority(priority));
+    }
+
 }

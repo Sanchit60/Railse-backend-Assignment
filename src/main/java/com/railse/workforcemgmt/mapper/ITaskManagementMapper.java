@@ -1,7 +1,7 @@
 package com.railse.workforcemgmt.mapper;
 
 import com.railse.workforcemgmt.dto.TaskManagementDto;
-import com.railse.hiring.workforcemgmt.model.TaskManagement;
+import com.railse.workforcemgmt.model.TaskManagement;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
