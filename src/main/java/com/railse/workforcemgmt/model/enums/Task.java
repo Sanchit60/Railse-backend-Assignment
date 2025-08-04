@@ -1,6 +1,6 @@
-package com.railse.hiring.workforcemgmt.model.enums;
+package com.railse.workforcemgmt.model.enums;
 
-import com.railse.hiring.workforcemgmt.common.model.enums.ReferenceType;
+import com.railse.workforcemgmt.common.model.enums.ReferenceType;
 import lombok.Getter;
 
 import java.util.Arrays;

@@ -1,13 +1,15 @@
 package com.railse.workforcemgmt.repository;
 
-import com.railse.hiring.workforcemgmt.common.model.enums.ReferenceType;
+import com.railse.workforcemgmt.common.model.enums.ReferenceType;
+import com.railse.workforcemgmt.model.TaskActivity;
+import com.railse.workforcemgmt.model.TaskComment;
 import com.railse.workforcemgmt.model.TaskManagement;
 import com.railse.workforcemgmt.model.enums.Priority;
-import com.railse.hiring.workforcemgmt.model.enums.Task;
-import com.railse.hiring.workforcemgmt.model.enums.TaskStatus;
-import com.railse.workforcemgmt.repository.TaskRepository;
+import com.railse.workforcemgmt.model.enums.Task;
+import com.railse.workforcemgmt.model.enums.TaskStatus;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -18,6 +20,10 @@ public class InMemoryTaskRepository implements TaskRepository {
 
     private final Map<Long, TaskManagement> taskStore = new ConcurrentHashMap<>();
     private final AtomicLong idCounter = new AtomicLong(0);
+
+    private final Map<Long, List<TaskComment>> commentStore = new ConcurrentHashMap<>();
+    private final Map<Long, List<TaskActivity>> activityLog = new ConcurrentHashMap<>();
+
 
     public InMemoryTaskRepository() {
         // Seed data
@@ -63,6 +69,18 @@ public class InMemoryTaskRepository implements TaskRepository {
         return List.copyOf(taskStore.values());
     }
 
+    public void addCommentToTask(Long taskId, String author, String commentText) {
+        TaskComment comment = new TaskComment(taskId, author, commentText, LocalDateTime.now());
+        commentStore.computeIfAbsent(taskId, k -> new ArrayList<>()).add(comment);
+        addActivity(taskId, author + " added a comment.");
+    }
+
+    private void addActivity(Long taskId, String message) {
+        TaskActivity activity = new TaskActivity(taskId, message, LocalDateTime.now());
+        activityLog.computeIfAbsent(taskId, k -> new ArrayList<>()).add(activity);
+    }
+
+
     @Override
     public List<TaskManagement> findByReferenceIdAndReferenceType(Long referenceId, ReferenceType referenceType) {
         return taskStore.values().stream()
@@ -76,4 +94,21 @@ public class InMemoryTaskRepository implements TaskRepository {
                 .filter(task -> assigneeIds.contains(task.getAssigneeId()))
                 .collect(Collectors.toList());
     }
+    @Override
+    public List<TaskManagement> getTasksByPriority(Priority priority) {
+        return taskStore.values().stream()
+                .filter(task -> task.getPriority() == priority)
+                .collect(Collectors.toList());
+    }
+    @Override
+    public List<TaskComment> findCommentsByTaskId(Long taskId) {
+        return commentStore.getOrDefault(taskId, Collections.emptyList());
+    }
+    @Override
+    public List<TaskActivity> findActivitiesByTaskId(Long taskId) {
+        return activityLog.getOrDefault(taskId, Collections.emptyList());
+    }
+
+
+
 }
