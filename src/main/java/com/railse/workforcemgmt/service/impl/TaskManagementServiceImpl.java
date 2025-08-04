@@ -80,12 +80,12 @@ public class TaskManagementServiceImpl implements TaskManagementService {
 
             // BUG #1: This reassigns all matching tasks instead of assigning one and cancelling others
             if (!tasksOfType.isEmpty()) {
-                // ✅ Reassign only the first task
-                TaskManagement taskToAssign = tasksOfType.get(0);
-                taskToAssign.setAssigneeId(request.getAssigneeId());
-                taskRepository.save(taskToAssign);
+                // Reassign only one
+                TaskManagement taskToReassign = tasksOfType.get(0);
+                taskToReassign.setAssigneeId(request.getAssigneeId());
+                taskRepository.save(taskToReassign);
 
-                // ❌ Cancel the rest
+                // Cancel the rest
                 for (int i = 1; i < tasksOfType.size(); i++) {
                     TaskManagement taskToCancel = tasksOfType.get(i);
                     taskToCancel.setStatus(TaskStatus.CANCELLED);
@@ -112,9 +112,10 @@ public class TaskManagementServiceImpl implements TaskManagementService {
 
         // BUG #2: Should filter out CANCELLED tasks but doesn't
         List<TaskManagement> filteredTasks = tasks.stream()
+                .filter(task -> task.getStatus() != TaskStatus.CANCELLED)
                 .filter(task -> {
-                    // Incomplete date filtering logic
-                    return true;
+                    long deadline = task.getTaskDeadlineTime();
+                    return deadline >= request.getStartDate() && deadline <= request.getEndDate();
                 })
                 .collect(Collectors.toList());
 
