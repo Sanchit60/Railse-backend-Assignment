@@ -91,8 +91,7 @@ public class TaskManagementServiceImpl implements TaskManagementService {
                     taskToCancel.setStatus(TaskStatus.CANCELLED);
                     taskRepository.save(taskToCancel);
                 }
-            }
-            else {
+            } else {
                 TaskManagement newTask = new TaskManagement();
                 newTask.setReferenceId(request.getReferenceId());
                 newTask.setReferenceType(request.getReferenceType());
@@ -107,15 +106,20 @@ public class TaskManagementServiceImpl implements TaskManagementService {
     }
 
     @Override
-    public List<com.railse.workforcemgmt.dto.TaskManagementDto> fetchTasksByDate(com.railse.workforcemgmt.dto.TaskFetchByDateRequest request) {
+    public List<TaskManagementDto> fetchTasksByDate(TaskFetchByDateRequest request) {
         List<TaskManagement> tasks = taskRepository.findByAssigneeIdIn(request.getAssigneeIds());
 
-        // BUG #2: Should filter out CANCELLED tasks but doesn't
+        long startDate = request.getStartDate();
+        long endDate = request.getEndDate();
+
         List<TaskManagement> filteredTasks = tasks.stream()
-                .filter(task -> task.getStatus() != TaskStatus.CANCELLED)
+                .filter(task -> task.getStatus() != TaskStatus.CANCELLED) // ignore cancelled
                 .filter(task -> {
-                    long deadline = task.getTaskDeadlineTime();
-                    return deadline >= request.getStartDate() && deadline <= request.getEndDate();
+                    Long deadline = task.getTaskDeadlineTime();
+                    boolean isInRange = deadline >= startDate && deadline <= endDate;
+                    boolean isBeforeRangeAndActive = deadline < startDate &&
+                            task.getStatus() != TaskStatus.COMPLETED;
+                    return isInRange || isBeforeRangeAndActive;
                 })
                 .collect(Collectors.toList());
 
