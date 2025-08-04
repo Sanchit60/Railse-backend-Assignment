@@ -78,7 +78,7 @@ public class TaskManagementServiceImpl implements TaskManagementService {
                     .filter(t -> t.getTask() == taskType && t.getStatus() != TaskStatus.COMPLETED)
                     .collect(Collectors.toList());
 
-            // BUG #1: This reassigns all matching tasks instead of assigning one and cancelling others
+            // BUG #1: This reassigns all matching tasks instead of assigning one and cancelling other tasks which is now fixed
             if (!tasksOfType.isEmpty()) {
                 // Reassign only one
                 TaskManagement taskToReassign = tasksOfType.get(0);
